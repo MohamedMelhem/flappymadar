@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Flappy_Bird_WPF_MOO_ICT"
         mc:Ignorable="d"
-        Title="Flappy Bird WPF MOO ICT" Height="490" Width="525">
+        Title="Flappy bird" Height="490" Width="525">
 	<Canvas Name="MyCanvas" Focusable="True" KeyDown="KeyIsDown" KeyUp="KeyIsUp" Background="LightBlue">
 
 		<Image Height="145" Width="200" Source="images/clouds.png" Canvas.Left="28" Canvas.Top="120" Tag="clouds"/>
