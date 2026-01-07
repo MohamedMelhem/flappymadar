@@ -44,8 +44,37 @@ namespace flappymadar
 		}
         private void StartGame()
         {
+            EnCanvasom.Focus();
 
-        }
+            int temp = 300;
+
+            score = 0;
+
+            gameOver = false;
+
+            Canvas.SetTop(FlappyBird, 200);
+
+			foreach (var x in EnCanvasom.Children.OfType<Image>())
+			{
+				if ((string)x.Tag == "obj1")
+				{
+                    Canvas.SetLeft(x, 500);
+					
+				}
+				if ((string)x.Tag == "obj1")
+				{
+					Canvas.SetLeft(x, 500);
+
+				}
+				if ((string)x.Tag == "obj1")
+				{
+					Canvas.SetLeft(x, 500);
+
+				}
+
+			}
+
+		}
         private void StopGame() { 
         }
 	}
