@@ -7,9 +7,20 @@
         mc:Ignorable="d"
         Title="FlappyMadar" Height="490" Width="525">
 	<Canvas x:Name="EnCanvasom" Focusable="True" KeyDown="KeyIsDown" KeyUp="KeyIsUp" Background="LightBlue">
-		<Image 
+		<Image  Height="145" Width="200" Source="/images/clouds.png" Canvas.Left="62" Canvas.Top="80" Tag="cloud"></Image>
+		<Image  Height="145" Width="200" Source="/images/clouds2.png" Canvas.Left="293" Canvas.Top="75" Tag="cloud"></Image>
 
-		<Image Height="390" Width="66" Source="/images/pipeBottom.png" Tag="obj1" Canvas.Left="122" Canvas.Top="136"/>
+		<Image Height="390" Width="66" Source="/images/pipeBottom.png" Tag="obj1" Canvas.Left="40" Canvas.Top="266"/>
+		<Image Height="390" Width="66" Source="/images/pipeTop.png" Tag="obj1" Canvas.Left="42" Canvas.Top="-239"/>
+
+		<Image Height="390" Width="66" Source="/images/pipeBottom.png" Tag="obj2" Canvas.Left="409" Canvas.Top="316"/>
+		<Image Height="390" Width="66" Source="/images/pipeTop.png" Tag="obj2" Canvas.Left="405" Canvas.Top="-200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+		<Image Height="390" Width="66" Source="/images/pipeBottom.png" Tag="obj3" Canvas.Left="248" Canvas.Top="245"/>
+		<Image Height="390" Width="66" Source="/images/pipeTop.png" Tag="obj3" Canvas.Left="247" Canvas.Top="-295"/>
+
+		<Image Name="FlappyBird" Height="36" Width="50"  Source="/images/flappyBird.png" Stretch="Fill" Canvas.Left="17" Canvas.Top="185"></Image>
+		<Label Name="ScoreLabel" Content="Score: 0" FontSize="16" FontWeight="Bold" Canvas.Left="10" Canvas.Top="10"/>
 
 	</Canvas>
 </Window>
