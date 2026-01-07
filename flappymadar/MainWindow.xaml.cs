@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace flappymadar
 {
@@ -16,9 +17,36 @@ namespace flappymadar
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        DispatcherTimer gameTimer = new DispatcherTimer();
+        double score;
+        int gravity = 6;
+        bool gameOver;
+        Rect FlappybirdhitBox;
+		public MainWindow()
         {
             InitializeComponent();
+            gameTimer.Tick += Maineventtimer;
+            gameTimer.Interval = TimeSpan.FromMicroseconds(20);
+            StartGame();
+		}
+
+		private void Maineventtimer(object? sender, EventArgs e)
+		{
+	
+		}
+
+		private void KeyIsDown(object sender, KeyEventArgs e)
+        {
+
+		}
+        private void KeyIsUp(object sender, KeyEventArgs e)
+        {
+		}
+        private void StartGame()
+        {
+
         }
-    }
+        private void StopGame() { 
+        }
+	}
 }
