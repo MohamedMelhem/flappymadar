@@ -6,10 +6,8 @@
         xmlns:local="clr-namespace:flappymadar"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-		<Grid.Background>
-			<ImageBrush ImageSource="/hatterflappy.png"/>
-		</Grid.Background>
-
-	</Grid>
+	<Window.Background>
+		<ImageBrush ImageSource="/flappy_bird_app_bg_only (1).png"/>
+	</Window.Background>
+	<Button Content="Button" HorizontalAlignment="Left" Margin="249,35,0,0" VerticalAlignment="Top" Height="54" Width="246"/>
 </Window>

@@ -9,10 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="alexXflora.png" />
+    <None Remove="flappy_bird_app_bg_only %281%29.png" />
     <None Remove="hatterflappy.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="alexXflora.png" />
+    <Resource Include="flappy_bird_app_bg_only (1).png" />
     <Resource Include="hatterflappy.png" />
   </ItemGroup>
 
