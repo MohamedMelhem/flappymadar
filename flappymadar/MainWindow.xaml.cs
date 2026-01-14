@@ -11,10 +11,16 @@ namespace FlappyMadar
 	public partial class MainWindow : Window
 	{
 		DispatcherTimer gameTimer = new DispatcherTimer();
+		Random rnd = new Random();
 
 		double score;
 		int gravity;
 		bool gameOver;
+
+		int pipeSpeed = 5;
+		int pipeGap = 160;
+		string difficulty = "EASY";
+
 		Rect birdHitBox;
 
 		public MainWindow()
@@ -31,57 +37,108 @@ namespace FlappyMadar
 
 		private void GameLoop(object sender, EventArgs e)
 		{
-			txtScore.Content = "Score: " + score;
+			UpdateDifficulty();
+			txtScore.Content = $"Score: {score} | {difficulty}";
 
-			birdHitBox = new Rect(Canvas.GetLeft(flappyBird),
-								  Canvas.GetTop(flappyBird),
-								  flappyBird.Width,
-								  flappyBird.Height);
+			// MADÁR
+			birdHitBox = new Rect(
+				Canvas.GetLeft(flappyBird),
+				Canvas.GetTop(flappyBird),
+				flappyBird.Width,
+				flappyBird.Height);
 
 			Canvas.SetTop(flappyBird, Canvas.GetTop(flappyBird) + gravity);
 
 			if (Canvas.GetTop(flappyBird) < -30 || Canvas.GetTop(flappyBird) > 440)
-			{
 				EndGame();
+
+			// FELHŐK
+			foreach (var cloud in MyCanvas.Children.OfType<Image>()
+				.Where(x => (string)x.Tag == "cloud"))
+			{
+				Canvas.SetLeft(cloud, Canvas.GetLeft(cloud) - 1);
+				if (Canvas.GetLeft(cloud) < -200)
+					Canvas.SetLeft(cloud, 550);
 			}
 
-			foreach (var x in MyCanvas.Children.OfType<Image>())
+			// CSÖVEK (obj1, obj2, obj3)
+			foreach (string tag in new[] { "obj1", "obj2", "obj3" })
 			{
-				if (x.Tag == null) continue;
+				var pipes = MyCanvas.Children.OfType<Image>()
+					.Where(x => (string)x.Tag == tag)
+					.ToList();
 
-				if ((string)x.Tag == "obj1" || (string)x.Tag == "obj2" || (string)x.Tag == "obj3")
+				if (pipes.Count != 2) continue;
+
+				Image topPipe = pipes.First(p => Canvas.GetTop(p) < 0);
+				Image bottomPipe = pipes.First(p => Canvas.GetTop(p) > 0);
+
+				Canvas.SetLeft(topPipe, Canvas.GetLeft(topPipe) - pipeSpeed);
+				Canvas.SetLeft(bottomPipe, Canvas.GetLeft(bottomPipe) - pipeSpeed);
+
+				if (Canvas.GetLeft(topPipe) < -80)
 				{
-					Canvas.SetLeft(x, Canvas.GetLeft(x) - 5);
-
-					if (Canvas.GetLeft(x) < -70)
-					{
-						Canvas.SetLeft(x, 900);
-						score += 0.5;
-					}
-
-					Rect pipeHitBox = new Rect(Canvas.GetLeft(x),
-											   Canvas.GetTop(x),
-											   x.Width,
-											   x.Height);
-
-					if (birdHitBox.IntersectsWith(pipeHitBox))
-					{
-						EndGame();
-					}
+					ResetPipePair(topPipe, bottomPipe, 900);
+					score++;
 				}
 
-				if ((string)x.Tag == "cloud")
-				{
-					Canvas.SetLeft(x, Canvas.GetLeft(x) - 1);
+				Rect topHit = new Rect(Canvas.GetLeft(topPipe), Canvas.GetTop(topPipe),
+									   topPipe.Width, topPipe.Height);
 
-					if (Canvas.GetLeft(x) < -200)
-					{
-						Canvas.SetLeft(x, 550);
-					}
+				Rect bottomHit = new Rect(Canvas.GetLeft(bottomPipe), Canvas.GetTop(bottomPipe),
+										  bottomPipe.Width, bottomPipe.Height);
+
+				if (birdHitBox.IntersectsWith(topHit) ||
+					birdHitBox.IntersectsWith(bottomHit))
+				{
+					EndGame();
 				}
 			}
 		}
 
+		private void ResetPipePair(Image top, Image bottom, double x)
+		{
+			int topY = rnd.Next(-280, -120);
+
+			Canvas.SetLeft(top, x);
+			Canvas.SetTop(top, topY);
+
+			Canvas.SetLeft(bottom, x);
+			Canvas.SetTop(bottom, topY + top.Height + pipeGap);
+		}
+		// itt lehet allitani a nehezseget
+		// a pipeSpeed a csovek sebessege
+		// a pipeGap a csovek kozotti tavolsag
+		// a score pedig a pontszam
+		// a difficulty pedig a nehezsegi szint neve
+		private void UpdateDifficulty()
+		{
+			if (score >= 25)
+			{
+				difficulty = "BYE BYE";
+				pipeSpeed = 20;
+				pipeGap = 100;
+			}
+			if (score >= 20)
+			{
+				difficulty = "HALÁL";
+				pipeSpeed = 9;
+				pipeGap = 110;
+			}
+			else if (score >= 10)
+			{
+				difficulty = "MEDIUM";
+				pipeSpeed = 7;
+				pipeGap = 130;
+			}
+			else
+			{
+				difficulty = "EASY";
+				pipeSpeed = 7;
+				pipeGap = 170;
+			}
+		}
+		// billentyuzet lenyomas es felengedes kezelese
 		private void KeyIsDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Space && !gameOver)
@@ -92,9 +149,7 @@ namespace FlappyMadar
 			}
 
 			if (e.Key == Key.R && gameOver)
-			{
 				StartGame();
-			}
 		}
 
 		private void KeyIsUp(object sender, KeyEventArgs e)
@@ -103,30 +158,41 @@ namespace FlappyMadar
 			flappyBird.RenderTransform =
 				new RotateTransform(10, flappyBird.Width / 2, flappyBird.Height / 2);
 		}
-
+		// jatek inditasa
+	
 		private void StartGame()
 		{
 			score = 0;
 			gravity = 6;
 			gameOver = false;
 
+			pipeSpeed = 5;
+			pipeGap = 160;
+			difficulty = "EASY";
+
 			Canvas.SetTop(flappyBird, 190);
 
-			int pipeX = 400;
-			foreach (var x in MyCanvas.Children.OfType<Image>())
-			{
-				if (x.Tag == null) continue;
+			double startX = 400;
 
-				if ((string)x.Tag == "obj1" || (string)x.Tag == "obj2" || (string)x.Tag == "obj3")
-				{
-					Canvas.SetLeft(x, pipeX);
-					pipeX += 200;
-				}
+			foreach (string tag in new[] { "obj1", "obj2", "obj3" })
+			{
+				var pipes = MyCanvas.Children.OfType<Image>()
+					.Where(x => (string)x.Tag == tag)
+					.ToList();
+
+				if (pipes.Count != 2) continue;
+
+				Image topPipe = pipes.First(p => Canvas.GetTop(p) < 0);
+				Image bottomPipe = pipes.First(p => Canvas.GetTop(p) > 0);
+
+				ResetPipePair(topPipe, bottomPipe, startX);
+				startX += 250;
 			}
 
 			gameTimer.Start();
 			MyCanvas.Focus();
 		}
+		// jatek vege
 
 		private void EndGame()
 		{
