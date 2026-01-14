@@ -53,9 +53,9 @@ namespace FlappyMadar
 				{
 					Canvas.SetLeft(x, Canvas.GetLeft(x) - 5);
 
-					if (Canvas.GetLeft(x) < -80)
+					if (Canvas.GetLeft(x) < -70)
 					{
-						Canvas.SetLeft(x, 600);
+						Canvas.SetLeft(x, 900);
 						score += 0.5;
 					}
 
@@ -99,7 +99,7 @@ namespace FlappyMadar
 
 		private void KeyIsUp(object sender, KeyEventArgs e)
 		{
-			gravity = 8;
+			gravity = 6;
 			flappyBird.RenderTransform =
 				new RotateTransform(10, flappyBird.Width / 2, flappyBird.Height / 2);
 		}
@@ -107,7 +107,7 @@ namespace FlappyMadar
 		private void StartGame()
 		{
 			score = 0;
-			gravity = 8;
+			gravity = 6;
 			gameOver = false;
 
 			Canvas.SetTop(flappyBird, 190);

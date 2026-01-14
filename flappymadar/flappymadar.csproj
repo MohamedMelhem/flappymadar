@@ -9,7 +9,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="image\" />
+    <None Remove="image\clouds.png" />
+    <None Remove="image\clouds2.png" />
+    <None Remove="image\flappyBird.png" />
+    <None Remove="image\pipeBottom.png" />
+    <None Remove="image\pipeTop.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="image\clouds2.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="image\flappyBird.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="image\pipeBottom.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="image\pipeTop.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>
