@@ -5,6 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Windows.Shapes;
+using System.Collections.Generic;
 
 namespace FlappyMadar
 {
@@ -12,10 +14,16 @@ namespace FlappyMadar
 	{
 		DispatcherTimer gameTimer = new DispatcherTimer();
 		Random rnd = new Random();
+		// ÚJ LISTA + RANDOM (osztályszinten)
+		List<Rectangle> rainDrops = new List<Rectangle>();
+		Random rainRnd = new Random();
+
 
 		double score;
 		int gravity;
 		bool gameOver;
+
+		int rainForce = 0;
 
 		int pipeSpeed = 5;
 		int pipeGap = 160;
@@ -34,12 +42,47 @@ namespace FlappyMadar
 
 			StartGame();
 		}
+		private void SpawnRain()
+		{
+			if (rainDrops.Count < 80)
+			{
+				Rectangle drop = new Rectangle
+				{
+					Width = 2,
+					Height = 12,
+					Fill = Brushes.LightSteelBlue,
+					Opacity = 0.7
+				};
 
+				Canvas.SetLeft(drop, rainRnd.Next(0, 520));
+				Canvas.SetTop(drop, rainRnd.Next(-200, 0));
+
+				rainDrops.Add(drop);
+				MyCanvas.Children.Add(drop);
+			}
+		}
 		private void GameLoop(object sender, EventArgs e)
 		{
+			if (difficulty == "MEDIUM" || difficulty == "HALÁL" || difficulty == "BYE BYE" || difficulty == "ŐRÜLET")
+			{
+				SpawnRain();
+
+				foreach (var drop in rainDrops.ToList())
+				{
+					Canvas.SetTop(drop, Canvas.GetTop(drop) + 15);
+
+					if (Canvas.GetTop(drop) > 500)
+					{
+						Canvas.SetTop(drop, rainRnd.Next(-200, 0));
+						Canvas.SetLeft(drop, rainRnd.Next(0, 520));
+					}
+				}
+			}
 			UpdateDifficulty();
 			txtScore.Content = $"Score: {score} | {difficulty}";
 
+			rainForce++;
+			if (rainForce > 6) rainForce = 6;
 			// MADÁR
 			birdHitBox = new Rect(
 				Canvas.GetLeft(flappyBird),
@@ -47,7 +90,7 @@ namespace FlappyMadar
 				flappyBird.Width,
 				flappyBird.Height);
 
-			Canvas.SetTop(flappyBird, Canvas.GetTop(flappyBird) + gravity);
+			Canvas.SetTop(flappyBird, Canvas.GetTop(flappyBird) + gravity + rainForce);
 
 			if (Canvas.GetTop(flappyBird) < -30 || Canvas.GetTop(flappyBird) > 440)
 				EndGame();
@@ -87,12 +130,22 @@ namespace FlappyMadar
 
 				Rect bottomHit = new Rect(Canvas.GetLeft(bottomPipe), Canvas.GetTop(bottomPipe),
 										  bottomPipe.Width, bottomPipe.Height);
+				foreach (var drop in rainDrops.ToList())
+				{
+					Canvas.SetTop(drop, Canvas.GetTop(drop) + 15);
 
+					if (Canvas.GetTop(drop) > 500)
+					{
+						Canvas.SetTop(drop, rainRnd.Next(-200, 0));
+						Canvas.SetLeft(drop, rainRnd.Next(0, 520));
+					}
+				}
 				if (birdHitBox.IntersectsWith(topHit) ||
 					birdHitBox.IntersectsWith(bottomHit))
 				{
 					EndGame();
 				}
+
 			}
 		}
 
@@ -118,24 +171,29 @@ namespace FlappyMadar
 				difficulty = "BYE BYE";
 				pipeSpeed = 20;
 				pipeGap = 100;
+				rainForce = 6;
+
 			}
 			if (score >= 20)
 			{
 				difficulty = "HALÁL";
 				pipeSpeed = 9;
 				pipeGap = 110;
+				rainForce = 3;
 			}
 			else if (score >= 10)
 			{
 				difficulty = "MEDIUM";
 				pipeSpeed = 7;
 				pipeGap = 130;
+				rainForce = 3;
 			}
 			else
 			{
 				difficulty = "EASY";
 				pipeSpeed = 7;
 				pipeGap = 170;
+				rainForce = 0;
 			}
 		}
 		// billentyuzet lenyomas es felengedes kezelese
@@ -159,9 +217,10 @@ namespace FlappyMadar
 				new RotateTransform(10, flappyBird.Width / 2, flappyBird.Height / 2);
 		}
 		// jatek inditasa
-	
+
 		private void StartGame()
 		{
+			rainForce = 0;
 			score = 0;
 			gravity = 6;
 			gameOver = false;
@@ -188,6 +247,9 @@ namespace FlappyMadar
 				ResetPipePair(topPipe, bottomPipe, startX);
 				startX += 250;
 			}
+			foreach (var r in rainDrops)
+				MyCanvas.Children.Remove(r);
+			rainDrops.Clear();
 
 			gameTimer.Start();
 			MyCanvas.Focus();
@@ -196,7 +258,7 @@ namespace FlappyMadar
 
 		private void EndGame()
 		{
-			if (gameOver) return; 
+			if (gameOver) return;
 
 			gameOver = true;
 			gameTimer.Stop();
