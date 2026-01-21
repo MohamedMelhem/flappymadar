@@ -196,11 +196,11 @@ namespace FlappyMadar
 
 		private void EndGame()
 		{
-			if (gameOver) return;
+			if (gameOver) return; 
 
 			gameOver = true;
 			gameTimer.Stop();
-			txtScore.Content += "  GAME OVER - Press R";
+			txtScore.Content += $" || Game Over || Press R!Pontod :  {score} ";
 		}
 	}
 }
