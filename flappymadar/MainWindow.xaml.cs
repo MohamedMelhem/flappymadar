@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using System.Windows.Shapes;
 using System.Collections.Generic;
 
+
 namespace FlappyMadar
 {
 	public partial class MainWindow : Window
@@ -17,6 +18,10 @@ namespace FlappyMadar
 		// ÚJ LISTA + RANDOM (osztályszinten)
 		List<Rectangle> rainDrops = new List<Rectangle>();
 		Random rainRnd = new Random();
+		//eso vege
+		List<Rectangle> fogLayers = new List<Rectangle>();
+		Random fogRnd = new Random();
+
 
 
 		double score;
@@ -50,7 +55,7 @@ namespace FlappyMadar
 				{
 					Width = 2,
 					Height = 12,
-					Fill = Brushes.LightSteelBlue,
+					Fill = Brushes.AliceBlue,
 					Opacity = 0.7
 				};
 
@@ -61,6 +66,25 @@ namespace FlappyMadar
 				MyCanvas.Children.Add(drop);
 			}
 		}
+		private void SpawnFog()
+		{
+			if (fogLayers.Count < 5) // maximum 5 köd réteg
+			{
+				Rectangle fog = new Rectangle
+				{
+					Width = 600,
+					Height = 490,
+					Fill = new SolidColorBrush(Color.FromArgb(30, 255, 255, 255)), 
+				};
+
+				Canvas.SetLeft(fog, 0);
+				Canvas.SetTop(fog, 0);
+
+				fogLayers.Add(fog);
+				MyCanvas.Children.Add(fog);
+			}
+		}
+
 		private void GameLoop(object sender, EventArgs e)
 		{
 			if (difficulty == "MEDIUM" || difficulty == "HALÁL" || difficulty == "BYE BYE" || difficulty == "ŐRÜLET")
@@ -78,8 +102,35 @@ namespace FlappyMadar
 					}
 				}
 			}
+			// KÖD
+			if (difficulty == "HALÁL" || difficulty == "BYE BYE" )
+			{
+				SpawnFog();
+
+				foreach (var fog in fogLayers)
+				{
+					double currentTop = Canvas.GetTop(fog);
+					Canvas.SetTop(fog, currentTop); // nagyon lassú lefelé mozgás
+
+					if (Canvas.GetTop(fog) > 0) // ha elért az aljára, reset
+					{
+						Canvas.SetTop(fog, 0);
+					}
+				}
+			}
+
 			UpdateDifficulty();
-			txtScore.Content = $"Score: {score} | {difficulty}";
+	//Külön fajta ki iirasok stb.
+			txtScore.Content = $"Score: {score} | {difficulty} |";
+			if (score == 10)
+			{
+				txtScore.Content = "Rain has been enelabed";
+			}
+			if (score == 20) { 
+			txtScore.Content = "Fog has been enabled";
+			}
+
+			// ESŐ
 
 			rainForce++;
 			if (rainForce > 6) rainForce = 6;
@@ -101,7 +152,7 @@ namespace FlappyMadar
 			{
 				Canvas.SetLeft(cloud, Canvas.GetLeft(cloud) - 1);
 				if (Canvas.GetLeft(cloud) < -200)
-					Canvas.SetLeft(cloud, 550);
+					Canvas.SetLeft(cloud, 600);
 			}
 
 			// CSÖVEK (obj1, obj2, obj3)
@@ -166,12 +217,14 @@ namespace FlappyMadar
 		// a difficulty pedig a nehezsegi szint neve
 		private void UpdateDifficulty()
 		{
-			if (score >= 25)
+			if (score >= 30)
 			{
 				difficulty = "BYE BYE";
 				pipeSpeed = 20;
 				pipeGap = 100;
 				rainForce = 6;
+			
+
 
 			}
 			if (score >= 20)
@@ -180,6 +233,7 @@ namespace FlappyMadar
 				pipeSpeed = 9;
 				pipeGap = 110;
 				rainForce = 3;
+				fogLayers.Capacity = 5;
 			}
 			else if (score >= 10)
 			{
@@ -194,6 +248,7 @@ namespace FlappyMadar
 				pipeSpeed = 7;
 				pipeGap = 170;
 				rainForce = 0;
+				fogLayers.Clear();
 			}
 		}
 		// billentyuzet lenyomas es felengedes kezelese
@@ -247,6 +302,10 @@ namespace FlappyMadar
 				ResetPipePair(topPipe, bottomPipe, startX);
 				startX += 250;
 			}
+			foreach (var fog in fogLayers)
+				MyCanvas.Children.Remove(fog);
+			fogLayers.Clear();
+
 			foreach (var r in rainDrops)
 				MyCanvas.Children.Remove(r);
 			rainDrops.Clear();
@@ -254,6 +313,8 @@ namespace FlappyMadar
 			gameTimer.Start();
 			MyCanvas.Focus();
 		}
+
+
 		// jatek vege
 
 		private void EndGame()
