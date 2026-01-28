@@ -7,6 +7,13 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.Windows.Shapes;
 using System.Collections.Generic;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
+
+
+
+
+
 
 
 namespace FlappyMadar
@@ -21,38 +28,53 @@ namespace FlappyMadar
 		//eso vege
 		List<Rectangle> fogLayers = new List<Rectangle>();
 		Random fogRnd = new Random();
+		MediaPlayer bgMusic = new MediaPlayer();
 
-
+		// Játék változók
 
 		double score;
 		int gravity;
 		bool gameOver;
+		string selectedBird = "yellow";
 
 		int rainForce = 0;
+		//eso
 
 		int pipeSpeed = 5;
 		int pipeGap = 160;
+		//nehezseg
 		string difficulty = "EASY";
+		//menu
 		bool inMenu = true;
+		//játékos név kezdése defaultként
 		string playerName = "Player";
 
 
 		Rect birdHitBox;
-
+		// Konstruktor
 		public MainWindow()
 		{
+			
 			InitializeComponent();
 
-			Loaded += (s, e) => MyCanvas.Focus();
+			Loaded += Window_Loaded;
 
 			gameTimer.Interval = TimeSpan.FromMilliseconds(20);
 			gameTimer.Tick += GameLoop;
+			// Fake pontszámok betöltése
 			LoadFakeScores();
-
+			// Játék indítása
 			StartGame();
 		}
+		private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			if (bgMusic != null)
+				bgMusic.Volume = VolumeSlider.Value;
+		}
+		// ESŐ
 		private void SpawnRain()
 		{
+			// Maximum 80 esőcsepp
 			if (rainDrops.Count < 80)
 			{
 				Rectangle drop = new Rectangle
@@ -70,14 +92,74 @@ namespace FlappyMadar
 				MyCanvas.Children.Add(drop);
 			}
 		}
+		// Játék indítása gomb
 		private void StartButton_Click(object sender, RoutedEventArgs e)
 		{
+			if (selectedBird == "red")
+				flappyBird.Source = new BitmapImage(new Uri("/image/redbird.png", UriKind.Relative));
+			else if (selectedBird == "blue")
+				flappyBird.Source = new BitmapImage(new Uri("/image/bluebird.png", UriKind.Relative));
+			else
+				flappyBird.Source = new BitmapImage(new Uri("/image/flappyBird.png", UriKind.Relative));
+
+			//zene
+			bgMusic.Play();
 			playerName = NameBox.Text;
+			//eltunik a menu
 			MenuPanel.Visibility = Visibility.Collapsed;
 			inMenu = false;
+				//jatek inditasa
 			StartGame();
 		}
+		// Sárga madár kiválasztása
+		private void SelectYellowBird(object sender, MouseButtonEventArgs e)
+		{
+			selectedBird = "yellow";
 
+			YellowBorder.BorderBrush = Brushes.Gold;
+			YellowBorder.BorderThickness = new Thickness(3);
+
+			RedBorder.BorderBrush = Brushes.White;
+			RedBorder.BorderThickness = new Thickness(2);
+
+			flappyBird.Source = new BitmapImage(
+				new Uri("/image/flappyBird.png", UriKind.Relative));
+		}
+		//Kék madár kiválasztása
+		private void SelectBlueBird(object sender, MouseButtonEventArgs e)
+		{
+			selectedBird = "blue";
+			BlueBorder.BorderBrush = Brushes.Blue; BlueBorder.BorderThickness = new Thickness(3);
+			YellowBorder.BorderBrush = Brushes.White; YellowBorder.BorderThickness = new Thickness(2);
+			RedBorder.BorderBrush = Brushes.White; RedBorder.BorderThickness = new Thickness(2);
+
+			flappyBird.Source = new BitmapImage(new Uri("/image/bluebird.png", UriKind.Relative));
+		}
+		//Zene lejatszasa
+		private void PlayMusic_Click(object sender, RoutedEventArgs e)
+		{
+			bgMusic.Play();
+		}
+		//Zene megallitasa
+		private void StopMusic_Click(object sender, RoutedEventArgs e)
+		{
+			bgMusic.Pause();
+		}
+
+		private void SelectRedBird(object sender, MouseButtonEventArgs e)
+		{
+			selectedBird = "red";
+
+			RedBorder.BorderBrush = Brushes.Red;
+			RedBorder.BorderThickness = new Thickness(3);
+
+			YellowBorder.BorderBrush = Brushes.White;
+			YellowBorder.BorderThickness = new Thickness(2);
+
+			flappyBird.Source = new BitmapImage(
+				new Uri("/image/redbird.png", UriKind.Relative));
+		}
+		// KÖD
 		private void SpawnFog()
 		{
 			if (fogLayers.Count < 5) // maximum 5 köd réteg
@@ -96,11 +178,11 @@ namespace FlappyMadar
 				MyCanvas.Children.Add(fog);
 			}
 		}
-
+		// jatek ciklus
 		private void GameLoop(object sender, EventArgs e)
 		{
 			if (inMenu) return;
-
+			//itt hasonlo mint  a köd csak nehezseg alapu nem pontszam hogy dinamkan valtozzon
 			if (difficulty == "MEDIUM" || difficulty == "HALÁL" || difficulty == "BYE BYE" || difficulty == "ŐRÜLET")
 			{
 				SpawnRain();
@@ -118,7 +200,7 @@ namespace FlappyMadar
 			}
 
 
-			// KÖD
+			// KÖD ugy van meg csinava hogy ha a nehezsegi szint HALÁL vagy BYE BYE akkor jelenik meg
 			if (difficulty == "HALÁL" || difficulty == "BYE BYE" )
 			{
 				SpawnFog();
@@ -216,6 +298,24 @@ namespace FlappyMadar
 			}
 		}
 
+		//Zene betoltese
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				bgMusic.Open(new Uri(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "image/backgroundmusic.mp3")));
+				bgMusic.Volume = VolumeSlider.Value;
+				bgMusic.MediaEnded += (s, ev) => bgMusic.Position = TimeSpan.Zero;
+				bgMusic.Play();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Zene betöltése sikertelen: " + ex.Message);
+			}
+		}
+
+		// csőpár resetelése
+
 		private void ResetPipePair(Image top, Image bottom, double x)
 		{
 			int topY = rnd.Next(-280, -120);
@@ -239,7 +339,7 @@ namespace FlappyMadar
 				pipeSpeed = 20;
 				pipeGap = 100;
 				rainForce = 6;
-			
+				//Itt van a legnehezebb szint
 
 
 			}
@@ -268,6 +368,7 @@ namespace FlappyMadar
 			}
 		}
 		// billentyuzet lenyomas es felengedes kezelese
+		//Ezeket ne vltoztasd
 		private void KeyIsDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Space && !gameOver)
@@ -280,7 +381,11 @@ namespace FlappyMadar
 			if (e.Key == Key.R && gameOver)
 				StartGame();
 		}
+		//itt ugyanaz csak lefele
 
+
+
+		//igazabol csak a space a fontos a tobbi csak extra funkcio és ugye annyi mezovel megy fel a madar
 		private void KeyIsUp(object sender, KeyEventArgs e)
 		{
 			gravity = 6;
@@ -288,6 +393,7 @@ namespace FlappyMadar
 				new RotateTransform(10, flappyBird.Width / 2, flappyBird.Height / 2);
 		}
 		// jatek inditasa
+		//Itt meg lehet adni a fake pontszamokat ide barmit irhatok ezeket is csak legenraltam
 		private void LoadFakeScores()
 		{
 			ScoreList.Items.Add("🥇 IsMeGehh77 - 90 pont");
@@ -296,7 +402,8 @@ namespace FlappyMadar
 			ScoreList.Items.Add("NoobPlayer - 4 pont");
 			ScoreList.Items.Add("PipeHater - 21 pont");
 		}
-
+		// jatek inditasa
+		//ugye itt a rainForce az eso erossege a score a pontszam gravity a gravitacio es a tobbi valtozo is itt van inicializalva
 		private void StartGame()
 		{
 			rainForce = 0;
@@ -307,7 +414,7 @@ namespace FlappyMadar
 			pipeSpeed = 5;
 			pipeGap = 160;
 			difficulty = "EASY";
-
+			//ugye easy be kezdjuk
 			Canvas.SetTop(flappyBird, 190);
 
 			double startX = 400;
@@ -340,6 +447,12 @@ namespace FlappyMadar
 
 
 		// jatek vege
+		// a Gamerover az a ciklusban van meghivva ha a madar neki megy a csoveknek vagy kimegy a jatek teruletrol
+		/// <summary>
+		/// Gametimer stop es a pontszam kiirasa a listaba
+		/// menu panel az vissza állit
+		/// 
+		/// </summary>
 
 		private void EndGame()
 		{
@@ -352,6 +465,8 @@ namespace FlappyMadar
 			inMenu = true;
 
 		}
+
+
 	}
 }
 

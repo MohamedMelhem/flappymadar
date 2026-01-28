@@ -9,6 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="image\backgroundmusic.mp3" />
+    <None Remove="image\backgroundmusic.mp4" />
+    <None Remove="image\bluebird.png" />
     <None Remove="image\clouds.png" />
     <None Remove="image\clouds2.png" />
     <None Remove="image\flappyBird.png" />
@@ -18,6 +21,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="image\backgroundmusic.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="image\backgroundmusic.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="image\bluebird.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="image\clouds2.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

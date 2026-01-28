@@ -7,7 +7,8 @@
         KeyDown="KeyIsDown"
         KeyUp="KeyIsUp"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded">
 
 	<Canvas x:Name="MyCanvas" Background="LightBlue" Focusable="True">
 
@@ -25,7 +26,7 @@
 		<Image Source="/image/pipeBottom.png" Width="66" Height="390" Canvas.Left="458" Canvas.Top="257" Tag="obj3"/>
 		<Image Source="/image/pipeTop.png" Width="66" Height="390" Canvas.Left="380" Canvas.Top="-267" Tag="obj3"/>
 
-		<!-- MADÁR – DEFAULT (SÁRGA) -->
+		<!-- MADÁR – ALAP (választott) -->
 		<Image x:Name="flappyBird"
                Source="/image/flappyBird.png"
                Width="50"
@@ -41,24 +42,25 @@
                Canvas.Left="10"
                Canvas.Top="10"/>
 
-
+		<!-- MENÜ PANEL -->
 		<Grid x:Name="MenuPanel"
-              Width="600"
-              Height="490"
-              Canvas.Left="0"
-              Canvas.Top="0"
-              Background="#AA000000">
+              Width="619"
+              Height="485"
+              Canvas.Left="-1"
+              Background="LightSkyBlue"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Top" Canvas.Top="-4">
 
 			<StackPanel HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Width="340">
+                        Width="400" Height="497">
 
-				<TextBlock Text="FLAPPY MADÁR"
+				<TextBlock Text="FLAPPY BIRD."
                            FontSize="38"
                            FontWeight="Bold"
-                           Foreground="White"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,25"/>
+                           Foreground="Yellow"
+                           Height="53" Width="313"
+                           HorizontalAlignment="Center"/>
 
 				<TextBlock Text="Neved:"
                            Foreground="White"
@@ -70,58 +72,67 @@
                          Height="30"
                          Margin="0,5,0,15"/>
 
+				<!-- Hangvezérlés -->
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15">
+					<TextBlock Text="Hangerő:" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="White"/>
+					<Slider x:Name="VolumeSlider" Minimum="0" Maximum="1" Value="0.5" Width="200"
+                            ValueChanged="VolumeSlider_ValueChanged"/>
+				</StackPanel>
+
+				<!-- KARAKTEREK -->
 				<TextBlock Text="Karakterek:"
-           Foreground="White"
-           FontSize="16"
-           Margin="0,10,0,5"
-           HorizontalAlignment="Center"/>
+                           Foreground="Orange"
+                           FontSize="16"
+                           Margin="0,10,0,5"
+                           HorizontalAlignment="Center"/>
 
 				<StackPanel Orientation="Horizontal"
-            HorizontalAlignment="Center"
-            Margin="0,0,0,15">
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,15">
 
 					<!-- SÁRGA (DEFAULT) -->
 					<Border x:Name="YellowBorder"
-            BorderBrush="Gold"
-            BorderThickness="3"
-            Padding="5"
-            Margin="5"
-            MouseDown="SelectYellowBird"
-            Cursor="Hand">
-
+                            BorderBrush="Gold"
+                            BorderThickness="3"
+                            Padding="5"
+                            Margin="5"
+                            MouseDown="SelectYellowBird"
+                            Cursor="Hand">
 						<StackPanel>
-							<Image Source="/image/flappyBird.png"
-                   Width="60"
-                   Height="45"/>
-							<TextBlock Text="DEFAULT"
-                       Foreground="Gold"
-                       FontSize="12"
-                       HorizontalAlignment="Center"/>
+							<Image Source="/image/flappyBird.png" Width="60" Height="45"/>
+							<TextBlock Text="DEFAULT" Foreground="Gold" FontSize="12" HorizontalAlignment="Center"/>
 						</StackPanel>
 					</Border>
 
 					<!-- PIROS -->
 					<Border x:Name="RedBorder"
-            BorderBrush="White"
-            BorderThickness="2"
-            Padding="5"
-            Margin="5"
-            MouseDown="SelectRedBird"
-            Cursor="Hand">
-
+                            BorderBrush="White"
+                            BorderThickness="2"
+                            Padding="5"
+                            Margin="5"
+                            MouseDown="SelectRedBird"
+                            Cursor="Hand">
 						<StackPanel>
-							<Image Source="/image/redbird.png"
-                   Width="60"
-                   Height="45"/>
-							<TextBlock Text="RED"
-                       Foreground="White"
-                       FontSize="12"
-                       HorizontalAlignment="Center"/>
+							<Image Source="/image/redbird.png" Width="60" Height="45"/>
+							<TextBlock Text="RED" Foreground="White" FontSize="12" HorizontalAlignment="Center"/>
+						</StackPanel>
+					</Border>
+
+					<!-- KÉK -->
+					<Border x:Name="BlueBorder"
+                            BorderBrush="White"
+                            BorderThickness="2"
+                            Padding="5"
+                            Margin="5"
+                            MouseDown="SelectBlueBird"
+                            Cursor="Hand">
+						<StackPanel>
+							<Image Source="/image/bluebird.png" Width="60" Height="45"/>
+							<TextBlock Text="BLUE" Foreground="White" FontSize="12" HorizontalAlignment="Center"/>
 						</StackPanel>
 					</Border>
 
 				</StackPanel>
-
 
 				<Button Content="START"
                         FontSize="22"
@@ -129,10 +140,11 @@
                         Click="StartButton_Click"
                         Margin="0,0,0,20"/>
 
-				<TextBlock Text="🏆 Ranglista"
-                           Foreground="White"
+				<TextBlock Text="🏆 Eredmények"
+                           Foreground="ForestGreen"
                            FontSize="20"
-                           Margin="0,10,0,10"/>
+                           Margin="0,10,0,10"
+                           HorizontalAlignment="Center"/>
 
 				<ListBox x:Name="ScoreList"
                          Height="160"
