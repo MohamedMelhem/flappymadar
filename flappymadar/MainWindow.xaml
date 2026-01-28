@@ -5,24 +5,140 @@
         Width="600"
         Height="490"
         KeyDown="KeyIsDown"
-        KeyUp="KeyIsUp">
+        KeyUp="KeyIsUp"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
 
 	<Canvas x:Name="MyCanvas" Background="LightBlue" Focusable="True">
 
+		<!-- FELHŐK -->
 		<Image Source="/image/clouds.png" Width="200" Height="145" Canvas.Left="30" Canvas.Top="120" Tag="cloud"/>
 		<Image Source="/image/clouds2.png" Width="200" Height="145" Canvas.Left="300" Canvas.Top="120" Tag="cloud"/>
 
-		<Image Source="/image/pipeBottom.png" Width="66" Height="390" Canvas.Left="104" Canvas.Top="246" Tag="obj1" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-		<Image Source="/image/pipeTop.png" Width="66" Height="390" Canvas.Left="29" Canvas.Top="-317" Tag="obj1" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+		<!-- CSÖVEK -->
+		<Image Source="/image/pipeBottom.png" Width="66" Height="390" Canvas.Left="104" Canvas.Top="246" Tag="obj1"/>
+		<Image Source="/image/pipeTop.png" Width="66" Height="390" Canvas.Left="29" Canvas.Top="-317" Tag="obj1"/>
 
 		<Image Source="/image/pipeBottom.png" Width="66" Height="390" Canvas.Left="305" Canvas.Top="341" Tag="obj2"/>
 		<Image Source="/image/pipeTop.png" Width="66" Height="390" Canvas.Left="214" Canvas.Top="-226" Tag="obj2"/>
 
-		<Image Source="/image/pipeBottom.png" Width="66" Height="390" Canvas.Left="458" Canvas.Top="257" Tag="obj3" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-		<Image Source="/image/pipeTop.png" Width="66" Height="390" Canvas.Left="380" Canvas.Top="-267" Tag="obj3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+		<Image Source="/image/pipeBottom.png" Width="66" Height="390" Canvas.Left="458" Canvas.Top="257" Tag="obj3"/>
+		<Image Source="/image/pipeTop.png" Width="66" Height="390" Canvas.Left="380" Canvas.Top="-267" Tag="obj3"/>
 
-		<Image x:Name="flappyBird" Source="/image/flappyBird.png" Width="50" Height="36" Canvas.Left="1" Canvas.Top="112" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+		<!-- MADÁR – DEFAULT (SÁRGA) -->
+		<Image x:Name="flappyBird"
+               Source="/image/flappyBird.png"
+               Width="50"
+               Height="36"
+               Canvas.Left="60"
+               Canvas.Top="190"/>
 
-		<Label x:Name="txtScore" Content="Score: 0" FontSize="20" FontWeight="Bold" Canvas.Left="10" Canvas.Top="10"/>
+		<!-- SCORE -->
+		<Label x:Name="txtScore"
+               Content="Score: 0"
+               FontSize="20"
+               FontWeight="Bold"
+               Canvas.Left="10"
+               Canvas.Top="10"/>
+
+
+		<Grid x:Name="MenuPanel"
+              Width="600"
+              Height="490"
+              Canvas.Left="0"
+              Canvas.Top="0"
+              Background="#AA000000">
+
+			<StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="340">
+
+				<TextBlock Text="FLAPPY MADÁR"
+                           FontSize="38"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,25"/>
+
+				<TextBlock Text="Neved:"
+                           Foreground="White"
+                           FontSize="16"/>
+
+				<TextBox x:Name="NameBox"
+                         Text="Player"
+                         FontSize="16"
+                         Height="30"
+                         Margin="0,5,0,15"/>
+
+				<TextBlock Text="Karakterek:"
+           Foreground="White"
+           FontSize="16"
+           Margin="0,10,0,5"
+           HorizontalAlignment="Center"/>
+
+				<StackPanel Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            Margin="0,0,0,15">
+
+					<!-- SÁRGA (DEFAULT) -->
+					<Border x:Name="YellowBorder"
+            BorderBrush="Gold"
+            BorderThickness="3"
+            Padding="5"
+            Margin="5"
+            MouseDown="SelectYellowBird"
+            Cursor="Hand">
+
+						<StackPanel>
+							<Image Source="/image/flappyBird.png"
+                   Width="60"
+                   Height="45"/>
+							<TextBlock Text="DEFAULT"
+                       Foreground="Gold"
+                       FontSize="12"
+                       HorizontalAlignment="Center"/>
+						</StackPanel>
+					</Border>
+
+					<!-- PIROS -->
+					<Border x:Name="RedBorder"
+            BorderBrush="White"
+            BorderThickness="2"
+            Padding="5"
+            Margin="5"
+            MouseDown="SelectRedBird"
+            Cursor="Hand">
+
+						<StackPanel>
+							<Image Source="/image/redbird.png"
+                   Width="60"
+                   Height="45"/>
+							<TextBlock Text="RED"
+                       Foreground="White"
+                       FontSize="12"
+                       HorizontalAlignment="Center"/>
+						</StackPanel>
+					</Border>
+
+				</StackPanel>
+
+
+				<Button Content="START"
+                        FontSize="22"
+                        Height="45"
+                        Click="StartButton_Click"
+                        Margin="0,0,0,20"/>
+
+				<TextBlock Text="🏆 Ranglista"
+                           Foreground="White"
+                           FontSize="20"
+                           Margin="0,10,0,10"/>
+
+				<ListBox x:Name="ScoreList"
+                         Height="160"
+                         FontSize="14"/>
+			</StackPanel>
+		</Grid>
+
 	</Canvas>
 </Window>

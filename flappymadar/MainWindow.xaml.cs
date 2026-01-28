@@ -33,6 +33,9 @@ namespace FlappyMadar
 		int pipeSpeed = 5;
 		int pipeGap = 160;
 		string difficulty = "EASY";
+		bool inMenu = true;
+		string playerName = "Player";
+
 
 		Rect birdHitBox;
 
@@ -44,6 +47,7 @@ namespace FlappyMadar
 
 			gameTimer.Interval = TimeSpan.FromMilliseconds(20);
 			gameTimer.Tick += GameLoop;
+			LoadFakeScores();
 
 			StartGame();
 		}
@@ -66,6 +70,14 @@ namespace FlappyMadar
 				MyCanvas.Children.Add(drop);
 			}
 		}
+		private void StartButton_Click(object sender, RoutedEventArgs e)
+		{
+			playerName = NameBox.Text;
+			MenuPanel.Visibility = Visibility.Collapsed;
+			inMenu = false;
+			StartGame();
+		}
+
 		private void SpawnFog()
 		{
 			if (fogLayers.Count < 5) // maximum 5 köd réteg
@@ -87,6 +99,8 @@ namespace FlappyMadar
 
 		private void GameLoop(object sender, EventArgs e)
 		{
+			if (inMenu) return;
+
 			if (difficulty == "MEDIUM" || difficulty == "HALÁL" || difficulty == "BYE BYE" || difficulty == "ŐRÜLET")
 			{
 				SpawnRain();
@@ -102,6 +116,8 @@ namespace FlappyMadar
 					}
 				}
 			}
+
+
 			// KÖD
 			if (difficulty == "HALÁL" || difficulty == "BYE BYE" )
 			{
@@ -272,6 +288,14 @@ namespace FlappyMadar
 				new RotateTransform(10, flappyBird.Width / 2, flappyBird.Height / 2);
 		}
 		// jatek inditasa
+		private void LoadFakeScores()
+		{
+			ScoreList.Items.Add("🥇 IsMeGehh77 - 90 pont");
+			ScoreList.Items.Add("🥈 FlappyPro - 72 pont");
+			ScoreList.Items.Add("🥉 MadarKiller - 55 pont");
+			ScoreList.Items.Add("NoobPlayer - 4 pont");
+			ScoreList.Items.Add("PipeHater - 21 pont");
+		}
 
 		private void StartGame()
 		{
@@ -323,7 +347,10 @@ namespace FlappyMadar
 
 			gameOver = true;
 			gameTimer.Stop();
-			txtScore.Content += $" || Game Over || Press R!Pontod :  {score} ";
+			ScoreList.Items.Insert(0, $"🔥 {playerName} - {score} pont");
+			MenuPanel.Visibility = Visibility.Visible;
+			inMenu = true;
+
 		}
 	}
 }
