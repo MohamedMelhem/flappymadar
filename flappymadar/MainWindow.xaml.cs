@@ -166,8 +166,8 @@ namespace FlappyMadar
 			{
 				Rectangle fog = new Rectangle
 				{
-					Width = 600,
-					Height = 490,
+					Width = 700,
+					Height = 590,
 					Fill = new SolidColorBrush(Color.FromArgb(30, 255, 255, 255)), 
 				};
 
@@ -219,7 +219,8 @@ namespace FlappyMadar
 
 			UpdateDifficulty();
 	//Külön fajta ki iirasok stb.
-			txtScore.Content = $"Score: {score} | {difficulty} |";
+			txtScore.Content = $"Score: {score}";
+			txtScore1.Content = $" {playerName}  |{difficulty}|";
 			if (score == 10)
 			{
 				txtScore.Content = "Rain has been enelabed";
@@ -233,6 +234,7 @@ namespace FlappyMadar
 			rainForce++;
 			if (rainForce > 6) rainForce = 6;
 			// MADÁR
+			// MADÁR
 			birdHitBox = new Rect(
 				Canvas.GetLeft(flappyBird),
 				Canvas.GetTop(flappyBird),
@@ -241,8 +243,16 @@ namespace FlappyMadar
 
 			Canvas.SetTop(flappyBird, Canvas.GetTop(flappyBird) + gravity + rainForce);
 
-			if (Canvas.GetTop(flappyBird) < -30 || Canvas.GetTop(flappyBird) > 440)
+			// IDE JÖN AZ ÚJ DINAMIKUS HALÁL ELLENŐRZÉS
+			double birdTop = Canvas.GetTop(flappyBird);
+			double canvasHeight = MyCanvas.ActualHeight;
+
+			if (birdTop < -flappyBird.Height || birdTop > canvasHeight - flappyBird.Height)
+			{
 				EndGame();
+
+			}
+
 
 			// FELHŐK
 			foreach (var cloud in MyCanvas.Children.OfType<Image>()
@@ -250,7 +260,7 @@ namespace FlappyMadar
 			{
 				Canvas.SetLeft(cloud, Canvas.GetLeft(cloud) - 1);
 				if (Canvas.GetLeft(cloud) < -200)
-					Canvas.SetLeft(cloud, 600);
+					Canvas.SetLeft(cloud, 700);
 			}
 
 			// CSÖVEK (obj1, obj2, obj3)
@@ -286,7 +296,7 @@ namespace FlappyMadar
 					if (Canvas.GetTop(drop) > 500)
 					{
 						Canvas.SetTop(drop, rainRnd.Next(-200, 0));
-						Canvas.SetLeft(drop, rainRnd.Next(0, 520));
+						Canvas.SetLeft(drop, rainRnd.Next(0, 580));
 					}
 				}
 				if (birdHitBox.IntersectsWith(topHit) ||
@@ -460,6 +470,24 @@ namespace FlappyMadar
 
 			gameOver = true;
 			gameTimer.Stop();
+			Canvas.SetTop(flappyBird, 190);
+
+			double startX = 400;
+
+			foreach (string tag in new[] { "obj1", "obj2", "obj3" })
+			{
+				var pipes = MyCanvas.Children.OfType<Image>()
+					.Where(x => (string)x.Tag == tag)
+					.ToList();
+
+				if (pipes.Count != 2) continue;
+
+				Image topPipe = pipes.First(p => Canvas.GetTop(p) < 0);
+				Image bottomPipe = pipes.First(p => Canvas.GetTop(p) > 0);
+
+				ResetPipePair(topPipe, bottomPipe, startX);
+				startX += 250;
+			}
 			ScoreList.Items.Insert(0, $"🔥 {playerName} - {score} pont");
 			MenuPanel.Visibility = Visibility.Visible;
 			inMenu = true;
